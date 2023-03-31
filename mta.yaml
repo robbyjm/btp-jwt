@@ -1,5 +1,5 @@
-_schema-version: '3.1'
-ID: accenture-oathsaml2bearer
+_schema-version: "3.1"
+ID: btp-jwt
 version: 1.0.0
 description: "A simple CAP project."
 parameters:
@@ -10,7 +10,7 @@ build-parameters:
       commands:
         - npx -p @sap/cds-dk cds build --production
 modules:
-  - name: accenture-oathsaml2bearer-srv
+  - name: btp-jwt-srv
     type: nodejs
     path: gen/srv
     parameters:
@@ -22,10 +22,10 @@ modules:
         properties:
           srv-url: ${default-url}
     requires:
-      - name: accenture-oathsaml2bearer-auth
-      - name: accenture-oathsaml2bearer-dest
+      - name: btp-jwt-auth
+      - name: btp-jwt-dest
 
-  - name: accenture-oathsaml2bearer
+  - name: btp-jwt
     type: approuter.nodejs
     path: app/ # from cds.env.folders. Consider also cds.env.build.target -> gen/app
     parameters:
@@ -39,22 +39,21 @@ modules:
           name: srv-api # must be used in xs-app.json as well
           url: ~{srv-url}
           forwardAuthToken: true
-      - name: accenture-oathsaml2bearer-auth
-      - name: accenture-oathsaml2bearer-dest
+      - name: btp-jwt-auth
+      - name: btp-jwt-dest
 
 resources:
-  - name: accenture-oathsaml2bearer-auth
+  - name: btp-jwt-auth
     type: org.cloudfoundry.managed-service
     parameters:
       service: xsuaa
       service-plan: application
       path: ./xs-security.json
       config:
-        xsappname: accenture-oathsaml2bearer-${org}-${space}
+        xsappname: btp-jwt-${org}-${space}
         tenant-mode: dedicated
-  - name: accenture-oathsaml2bearer-dest
+  - name: btp-jwt-dest
     type: org.cloudfoundry.managed-service
     parameters:
       service: destination
       service-plan: lite
-

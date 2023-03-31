@@ -1,4 +1,4 @@
-# CAP accenture-oathsaml2bearer
+# CAP btp-jwt
 _out
 *.db
 *.sqlite

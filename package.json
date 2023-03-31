@@ -1,5 +1,5 @@
 {
-  "name": "accenture-oathsaml2bearer",
+  "name": "btp-jwt",
   "version": "1.0.0",
   "description": "A simple CAP project.",
   "repository": "<Add your repository here>",
@@ -21,7 +21,7 @@
     "start": "cds-serve",
     "watch": "cds watch",
     "build": "mbt build",
-    "deploy": "mbt build && cf deploy mta_archives/accenture-oathsaml2bearer_1.0.0.mtar"
+    "deploy": "mbt build && cf deploy mta_archives/btp-jwt_1.0.0.mtar"
   },
   "cds": {
     "requires": {
