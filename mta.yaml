@@ -1,0 +1,60 @@
+_schema-version: '3.1'
+ID: accenture-oathsaml2bearer
+version: 1.0.0
+description: "A simple CAP project."
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npx -p @sap/cds-dk cds build --production
+modules:
+  - name: accenture-oathsaml2bearer-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: accenture-oathsaml2bearer-auth
+      - name: accenture-oathsaml2bearer-dest
+
+  - name: accenture-oathsaml2bearer
+    type: approuter.nodejs
+    path: app/ # from cds.env.folders. Consider also cds.env.build.target -> gen/app
+    parameters:
+      keep-existing-routes: true
+      disk-quota: 256M
+      memory: 256M
+    requires:
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api # must be used in xs-app.json as well
+          url: ~{srv-url}
+          forwardAuthToken: true
+      - name: accenture-oathsaml2bearer-auth
+      - name: accenture-oathsaml2bearer-dest
+
+resources:
+  - name: accenture-oathsaml2bearer-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: accenture-oathsaml2bearer-${org}-${space}
+        tenant-mode: dedicated
+  - name: accenture-oathsaml2bearer-dest
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+
